@@ -1,0 +1,193 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #c9a96e;
+  --ink: #0a0a0a;
+}
+
+@property --rainbow-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--ink);
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(201, 169, 110, 0.32);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 9999px;
+  border: 2px solid #0a0a0a;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9a7a42;
+}
+
+@layer components {
+  .kicker {
+    @apply text-xs font-medium uppercase tracking-kicker text-gold;
+  }
+
+  .container-site {
+    @apply mx-auto w-full max-w-site px-6 md:px-10;
+  }
+
+  .card {
+    @apply rounded-card bg-card;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-gold {
+    @apply btn bg-gold text-black hover:bg-gold-light active:scale-[0.98];
+  }
+
+  .btn-outline {
+    @apply btn border border-white/20 bg-transparent text-white hover:border-gold hover:text-gold active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply btn text-mist hover:text-white;
+  }
+
+  .input {
+    @apply w-full rounded-card border-none bg-raise px-5 py-3.5 text-sm text-white placeholder:text-mist/70 focus:outline-none focus:ring-2 focus:ring-gold/50;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-raise px-3.5 py-1.5 text-xs font-medium text-mist;
+  }
+}
+
+@layer utilities {
+  .text-gold-gradient {
+    background: linear-gradient(115deg, #efe0b8 0%, #c9a96e 42%, #9a7a42 78%, #e6cd9c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Bouton "+" : anneau rainbow angular 7 stops, rotation continue */
+  .rainbow-ring {
+    position: relative;
+    background:
+      linear-gradient(#0a0a0a, #0a0a0a) padding-box,
+      conic-gradient(
+          from var(--rainbow-angle),
+          #ff595e 0deg,
+          #ff924c 51deg,
+          #ffca3a 103deg,
+          #8ac926 154deg,
+          #38b6ff 206deg,
+          #6a4c93 257deg,
+          #b5179e 309deg,
+          #ff595e 360deg
+        )
+        border-box;
+    border: 3px solid transparent;
+    animation: rainbow-rotate 6s linear infinite;
+  }
+
+  .rainbow-ring-soft {
+    background:
+      linear-gradient(#141414, #141414) padding-box,
+      conic-gradient(
+          from var(--rainbow-angle),
+          rgba(255, 89, 94, 0.7) 0deg,
+          rgba(255, 146, 76, 0.7) 51deg,
+          rgba(255, 202, 58, 0.7) 103deg,
+          rgba(138, 201, 38, 0.7) 154deg,
+          rgba(56, 182, 255, 0.7) 206deg,
+          rgba(106, 76, 147, 0.7) 257deg,
+          rgba(181, 23, 158, 0.7) 309deg,
+          rgba(255, 89, 94, 0.7) 360deg
+        )
+        border-box;
+    border: 2px solid transparent;
+    animation: rainbow-rotate 8s linear infinite;
+  }
+
+  .rainbow-text {
+    background: conic-gradient(
+      from 90deg,
+      #ff595e,
+      #ff924c,
+      #ffca3a,
+      #8ac926,
+      #38b6ff,
+      #6a4c93,
+      #b5179e,
+      #ff595e
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hairline {
+    background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.45), transparent);
+    height: 1px;
+  }
+
+  .glass {
+    background: rgba(10, 10, 10, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@keyframes rainbow-rotate {
+  to {
+    --rainbow-angle: 360deg;
+  }
+}
