@@ -1,4 +1,5 @@
 import { ArrowLeft, ArrowRight, Bell, Lock, QrCode, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion';
 import type { Universe } from '@/lib/universes';
@@ -9,6 +10,17 @@ export function EventLanding({ universe }: { universe: Universe }) {
     <main>
       {/* HERO */}
       <section className="relative overflow-hidden pb-20 pt-10 md:pb-28 md:pt-16">
+        <div aria-hidden className="absolute inset-0">
+          <Image
+            src={universe.image}
+            alt=""
+            fill
+            priority
+            className="object-cover opacity-30"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/55 to-ink" />
+        </div>
         <div
           aria-hidden
           className={`pointer-events-none absolute -top-32 left-1/2 h-[480px] w-[820px] -translate-x-1/2 rounded-full bg-gradient-to-b ${universe.accent} blur-[120px]`}
@@ -26,7 +38,7 @@ export function EventLanding({ universe }: { universe: Universe }) {
             </RevealItem>
             <RevealItem>
               <div className="mt-8 flex justify-center">
-                <span className="flex h-20 w-20 items-center justify-center rounded-full bg-card text-gold">
+                <span className="flex h-20 w-20 items-center justify-center rounded-full bg-black/45 text-gold backdrop-blur ring-1 ring-white/10">
                   <Icon size={30} strokeWidth={1.4} />
                 </span>
               </div>

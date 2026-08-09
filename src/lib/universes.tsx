@@ -19,6 +19,7 @@ export interface Universe {
   icon: LucideIcon;
   href: string;
   live: boolean;
+  image: string; // visuel cinématique de la carte
   accent: string; // gradient css pour la carte
   scenario: {
     title: string;
@@ -35,6 +36,7 @@ export const UNIVERSES: Universe[] = [
       'Chaque invité devient caméraman. Le QR sur les tables, dix secondes chacun, et l’IA monte le film que personne n’aurait pu commander.',
     icon: Gem,
     href: '/mariage',
+    image: '/images/universes/mariage.jpg',
     live: true,
     accent: 'from-[#C9A96E]/30 via-[#C9A96E]/5 to-transparent',
     scenario: {
@@ -55,6 +57,7 @@ export const UNIVERSES: Universe[] = [
       'Un clip par semaine de la grossesse au premier anniversaire. La capsule s’ouvre le jour de ses 18 ans.',
     icon: Baby,
     href: '/naissance',
+    image: '/images/universes/naissance.jpg',
     live: false,
     accent: 'from-[#7FB3D5]/25 via-[#7FB3D5]/5 to-transparent',
     scenario: {
@@ -75,6 +78,7 @@ export const UNIVERSES: Universe[] = [
       'Une capsule récurrente : chaque année, le même rituel, les mêmes visages qui changent. Le temps devient visible.',
     icon: Cake,
     href: '/anniversaire',
+    image: '/images/universes/anniversaire.jpg',
     live: false,
     accent: 'from-[#E8A0BF]/25 via-[#E8A0BF]/5 to-transparent',
     scenario: {
@@ -95,6 +99,7 @@ export const UNIVERSES: Universe[] = [
       'La promo entière scelle ses ambitions le jour de la remise des diplômes. Ouverture programmée dix ans plus tard.',
     icon: GraduationCap,
     href: '/diplome',
+    image: '/images/universes/diplome.jpg',
     live: false,
     accent: 'from-[#8AC926]/20 via-[#8AC926]/5 to-transparent',
     scenario: {
@@ -115,6 +120,7 @@ export const UNIVERSES: Universe[] = [
       'Des années de vacances, de soirées et de mariages rassemblées dans une capsule commune. L’album du groupe, en mouvement.',
     icon: Users,
     href: '/amitie',
+    image: '/images/universes/amitie.jpg',
     live: false,
     accent: 'from-[#38B6FF]/25 via-[#38B6FF]/5 to-transparent',
     scenario: {
@@ -135,6 +141,7 @@ export const UNIVERSES: Universe[] = [
       'Ceux qui partent laissent des récits. Famille et amis racontent, la capsule garde les voix et les visages pour les générations suivantes.',
     icon: Heart,
     href: '/in-memoriam',
+    image: '/images/universes/in-memoriam.jpg',
     live: false,
     accent: 'from-[#B5179E]/20 via-[#B5179E]/5 to-transparent',
     scenario: {
@@ -155,6 +162,7 @@ export const UNIVERSES: Universe[] = [
       'Du premier coup de pioche à la remise des clés : la capsule d’un projet immobilier, d’une rénovation ou d’une création d’entreprise.',
     icon: Hammer,
     href: '/chantier',
+    image: '/images/universes/chantier.jpg',
     live: false,
     accent: 'from-[#FF924C]/25 via-[#FF924C]/5 to-transparent',
     scenario: {
@@ -175,6 +183,7 @@ export const UNIVERSES: Universe[] = [
       'Tour du monde, expatriation, tour de France à vélo : la capsule du voyage, alimentée à chaque escale, même hors connexion.',
     icon: Sailboat,
     href: '/odyssee',
+    image: '/images/universes/odyssee.jpg',
     live: false,
     accent: 'from-[#41EAD4]/20 via-[#41EAD4]/5 to-transparent',
     scenario: {

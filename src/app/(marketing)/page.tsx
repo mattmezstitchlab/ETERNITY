@@ -107,22 +107,36 @@ export default function HomePage() {
             <RevealItem key={u.id}>
               <Link
                 href={u.href}
-                className="group relative block overflow-hidden rounded-card bg-card p-6 transition-transform duration-500 hover:-translate-y-1.5"
+                className="group relative block aspect-[4/5] overflow-hidden rounded-card bg-card transition-transform duration-500 hover:-translate-y-1.5"
               >
-                <div className={`absolute inset-0 bg-gradient-to-b ${u.accent} opacity-60`} />
-                <div className="relative">
+                {/* Visuel cinématique */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={u.image}
+                  alt={`Univers ${u.name}`}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover opacity-75 transition-all duration-700 group-hover:scale-[1.06] group-hover:opacity-95"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/25 transition-opacity duration-500 group-hover:via-black/20" />
+                <div className={`absolute inset-0 bg-gradient-to-b ${u.accent} opacity-40 mix-blend-soft-light`} aria-hidden />
+
+                <div className="relative flex h-full flex-col justify-between p-6">
                   <div className="flex items-start justify-between">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-raise text-gold transition-colors group-hover:bg-gold group-hover:text-black">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-black/45 text-gold backdrop-blur transition-colors duration-300 group-hover:bg-gold group-hover:text-black">
                       <u.icon size={19} strokeWidth={1.6} />
                     </span>
                     <span
-                      className={`chip ${u.live ? 'bg-gold/15 text-gold' : ''}`}
+                      className={`chip backdrop-blur ${u.live ? 'bg-gold/85 text-black' : 'bg-black/45 text-white/80'}`}
                     >
                       {u.live ? '● Live' : 'Bientôt'}
                     </span>
                   </div>
-                  <h3 className="mt-14 text-2xl font-light text-white">{u.name}</h3>
-                  <p className="mt-1.5 text-sm text-mist">{u.tagline}</p>
+                  <div>
+                    <h3 className="text-2xl font-light text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
+                      {u.name}
+                    </h3>
+                    <p className="mt-1.5 text-sm text-white/70">{u.tagline}</p>
+                  </div>
                 </div>
               </Link>
             </RevealItem>
