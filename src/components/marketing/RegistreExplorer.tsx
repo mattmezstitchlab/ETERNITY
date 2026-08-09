@@ -74,7 +74,7 @@ export function RegistreExplorer() {
               className="card group p-6"
             >
               <div className="flex items-start justify-between">
-                <Avatar src={p.avatar} name={p.name} size={56} />
+                <Avatar src={p.avatar} name={p.name} size={88} className="shadow-[0_0_0_3px_rgba(201,169,110,0.18)]" />
                 <span className="chip font-mono tracking-[1.5px] text-gold/90">
                   <QrCode size={12} />
                   {p.qr_code}

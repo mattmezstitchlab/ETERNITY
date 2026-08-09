@@ -81,19 +81,19 @@ export function RegistreMobile() {
               transition={{ duration: 0.25 }}
               className="card p-4"
             >
-              <div className="flex items-center gap-3.5">
-                <Avatar src={p.avatar} name={p.name} size={46} />
+              <div className="flex items-center gap-4">
+                <Avatar src={p.avatar} name={p.name} size={68} className="shadow-[0_0_0_3px_rgba(201,169,110,0.18)]" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-white">{p.name}</p>
+                  <p className="truncate text-[15px] font-medium text-white">{p.name}</p>
                   <p className="truncate text-xs text-gold/90">{p.role}</p>
                   <p className="mt-0.5 truncate text-[11px] text-mist/70">{p.city} · {p.joined}</p>
                 </div>
                 <Link
                   href={`/app/qr/${p.qr_code}`}
                   aria-label={`Voir le QR de ${p.name}`}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-raise text-gold transition-colors hover:bg-gold hover:text-black"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-raise text-gold transition-colors hover:bg-gold hover:text-black"
                 >
-                  <QrCode size={16} />
+                  <QrCode size={17} />
                 </Link>
               </div>
             </motion.li>
