@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/app/', '/espace-compte'],
+        disallow: ['/app/', '/espace-compte', '/api/'],
       },
     ],
     sitemap: 'https://eternity.video/sitemap.xml',

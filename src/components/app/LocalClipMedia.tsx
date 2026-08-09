@@ -6,15 +6,18 @@ import type { Clip } from '@/lib/types';
 
 /**
  * Affiche le média d'un clip :
- * - clip local (capturé) : blob vidéo depuis IndexedDB
+ * - vidéo serveur (video_url = /api/media/…) : lecture directe
+ * - clip local (capturé hors-ligne) : blob vidéo depuis IndexedDB
  * - clip seed : poster image + overlay play
  */
 export function LocalClipMedia({ clip }: { clip: Clip }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
 
+  const serverUrl = clip.video_url?.startsWith('/api/') ? clip.video_url : null;
+
   useEffect(() => {
-    if (!clip.local || !clip.video_url || !isIdbAvailable()) return;
+    if (serverUrl || !clip.local || !clip.video_url || !isIdbAvailable()) return;
     let revoked: string | null = null;
     idbGet(clip.video_url)
       .then((blob) => {
@@ -27,18 +30,16 @@ export function LocalClipMedia({ clip }: { clip: Clip }) {
     return () => {
       if (revoked) URL.revokeObjectURL(revoked);
     };
-  }, [clip.local, clip.video_url]);
+  }, [serverUrl, clip.local, clip.video_url]);
 
-  if (clip.local && objectUrl) {
+  if (serverUrl) {
     return (
       <video
-        ref={videoRef}
-        src={objectUrl}
+        src={serverUrl}
         className="h-full w-full object-cover"
         controls
         playsInline
         preload="metadata"
-        muted={false}
       />
     );
   }

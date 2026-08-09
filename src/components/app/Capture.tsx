@@ -4,9 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Camera, Check, RefreshCcw, SwitchCamera, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { idbPut, isIdbAvailable } from '@/lib/idb';
 import { useEternity } from '@/lib/store';
-import { uid } from '@/lib/utils';
 
 const MAX_SECONDS = 10;
 
@@ -14,7 +12,7 @@ type Phase = 'idle' | 'recording' | 'preview' | 'denied' | 'demo';
 
 export function Capture() {
   const router = useRouter();
-  const { addClip, user } = useEternity();
+  const { uploadClip, user } = useEternity();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -29,6 +27,7 @@ export function Capture() {
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const [caption, setCaption] = useState('');
   const [saved, setSaved] = useState(false);
+  const [savedCloud, setSavedCloud] = useState(false);
 
   const stopStream = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -117,27 +116,15 @@ export function Capture() {
 
   const save = useCallback(async () => {
     if (!recordedBlob) return;
-    const key = `clip-${uid('blob')}`;
-    if (isIdbAvailable()) {
-      try {
-        await idbPut(key, recordedBlob);
-      } catch {
-        /* fallback : le clip gardera son poster null */
-      }
-    }
-    addClip({
-      user_id: user.id,
-      author_name: user.name.split(' ')[0],
-      author_avatar: user.avatar,
-      video_url: key,
-      poster: null,
+    const synced = await uploadClip(recordedBlob, {
       caption: caption.trim() || 'Un instant capturé pour la capsule.',
+      authorName: user.name.split(' ')[0],
       duration: Math.min(MAX_SECONDS, Math.max(1, elapsed)),
-      local: true,
     });
+    setSavedCloud(synced);
     setSaved(true);
-    setTimeout(() => router.push('/app'), 900);
-  }, [recordedBlob, caption, elapsed, addClip, user, router]);
+    setTimeout(() => router.push('/app'), 1000);
+  }, [recordedBlob, caption, elapsed, uploadClip, user, router]);
 
   const progress = elapsed / MAX_SECONDS;
   const RADIUS = 34;
@@ -262,7 +249,7 @@ export function Capture() {
                 {saved ? (
                   <>
                     <Check size={16} />
-                    Dans la capsule !
+                    {savedCloud ? 'Dans la capsule !' : 'Enregistré (hors-ligne)'}
                   </>
                 ) : (
                   <>

@@ -96,11 +96,13 @@ function Slide({ clip, index }: { clip: Clip; index: number }) {
   const [shared, setShared] = useState(false);
   const tapState = useRef({ last: 0, timer: null as ReturnType<typeof setTimeout> | null });
 
-  const isVideo = clip.local && !!clip.video_url;
+  const serverUrl = clip.video_url?.startsWith('/api/') ? clip.video_url : null;
+  const localVideo = clip.local && !!clip.video_url && !serverUrl;
+  const isVideo = !!serverUrl || !!localVideo;
 
-  // Blob local → objectURL
+  // Blob local (hors-ligne) → objectURL ; vidéo serveur → URL directe
   useEffect(() => {
-    if (!isVideo || !clip.video_url || !isIdbAvailable()) return;
+    if (!localVideo || !clip.video_url || !isIdbAvailable()) return;
     let url: string | null = null;
     idbGet(clip.video_url)
       .then((b) => {
@@ -113,7 +115,7 @@ function Slide({ clip, index }: { clip: Clip; index: number }) {
     return () => {
       if (url) URL.revokeObjectURL(url);
     };
-  }, [isVideo, clip.video_url]);
+  }, [localVideo, clip.video_url]);
 
   // Visibilité → auto-play
   useEffect(() => {
@@ -131,7 +133,7 @@ function Slide({ clip, index }: { clip: Clip; index: number }) {
     if (!v) return;
     if (inView) v.play().catch(() => undefined);
     else v.pause();
-  }, [inView, objectUrl]);
+  }, [inView, objectUrl, serverUrl]);
 
   // Progression (vidéo réelle ou simulée pour les posters)
   useEffect(() => {
@@ -221,10 +223,10 @@ function Slide({ clip, index }: { clip: Clip; index: number }) {
           aria-label={isVideo ? (muted ? 'Activer le son' : 'Couper le son') : 'Aimer'}
           tabIndex={-1}
         >
-          {isVideo && objectUrl ? (
+          {isVideo && (serverUrl || objectUrl) ? (
             <video
               ref={videoRef}
-              src={objectUrl}
+              src={serverUrl ?? objectUrl ?? undefined}
               className="h-full w-full object-cover"
               loop
               muted={muted}

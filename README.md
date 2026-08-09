@@ -21,6 +21,28 @@ est **Phase 2** — regroupé dans le footer, pas dans le chemin critique.
 
 **Métrique nord** : nombre de clips par capsule.
 
+## ✅ Application réelle (backend embarqué)
+
+L'app fonctionne pour de vrai — pas une maquette :
+
+- **Base SQLite** (`node:sqlite` natif Node 22, zéro dépendance native) dans `data/eternity.db`,
+  schéma identique aux tables Supabase de la spec
+- **Comptes réels** : inscription/connexion email + mot de passe (scrypt),
+  sessions httpOnly 30 j. Compte démo : `sophie.marchand@aime.fr` / `eternity742`
+- **Upload vidéo réel** : `POST /api/clips` (multipart, ≤ 40 Mo) → `data/uploads/`,
+  streaming `GET /api/media/<fichier>` avec **support Range** (requis par iOS)
+- **Multi-appareils** : un invité filme sur `/c/AIME-742-PLM` (son téléphone),
+  le clip apparaît dans le feed `/app` et le mini-site de **tous les appareils** (polling 6 s)
+- **Scellement appliqué côté serveur** : `POST /api/clips` → **410** après scellement
+- **Fallback hors-ligne** : IndexedDB local si l'API est injoignable
+
+Routes API : `/api/auth/{signup,login,logout,me}` · `/api/clips` (+`/like`) ·
+`/api/media/[key]` · `/api/capsule/[code]` (+`/seal`) · `/api/tasks` (+`/[id]/toggle`) ·
+`/api/budget` (+`/[id]/pay`) · `/api/messages`
+
+**Parcours démo de bout en bout** : `/c/AIME-742-PLM` (invité, filmez 10 s) →
+`/app/capsule/cap_jourj` (le clip apparaît → scellement) → `/mini-site` (l'artefact).
+
 ![Stack](https://img.shields.io/badge/Next.js-14-black) ![Tailwind](https://img.shields.io/badge/Tailwind-3.4-black) ![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-black) ![PWA](https://img.shields.io/badge/PWA-standalone-black)
 
 ---
@@ -35,13 +57,9 @@ npm start            # serveur de production (activer le service worker)
 npm run gen-icons    # régénère les icônes PWA (scripts/gen-icons.mjs, zéro dépendance native)
 ```
 
-Compte démo pré-chargé : **Sophie Marchand** — dossier « Mariage de Sophie & Lucas »
-(15 juin 2027, 89 invités, QR **AIME-742-PLM**). Toutes les données sont locales
-(persistées en `localStorage` + clips capturés en `IndexedDB`) et réinitialisables
-depuis `/app/compte` → « Réinitialiser la démo ».
-
-**Parcours démo express** : `/c/AIME-742-PLM` (invité, filmez 10 s) →
-`/app/capsule/cap_jourj` (le clip apparaît → scellement) → `/mini-site` (l'artefact).
+Compte démo pré-chargé : **sophie.marchand@aime.fr / eternity742** —
+dossier « Mariage de Sophie & Lucas » (15 juin 2027, 89 invités, QR **AIME-742-PLM**).
+Sans connexion, le site reste consultable en mode visiteur (même univers démo).
 
 ## 🏗️ Architecture
 

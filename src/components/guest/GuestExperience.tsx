@@ -6,6 +6,7 @@ import {
   Check,
   ChevronRight,
   Heart,
+  Loader2,
   Lock,
   RefreshCcw,
   SwitchCamera,
@@ -17,44 +18,62 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { InfinityMark } from '@/components/Logo';
 import { GUESTS_TOTAL } from '@/lib/data';
-import { idbPut, isIdbAvailable } from '@/lib/idb';
 import { useEternity } from '@/lib/store';
-import { cn, formatDateFr, isValidAimeCode, uid } from '@/lib/utils';
+import { cn, formatDateFr, isValidAimeCode } from '@/lib/utils';
 
 const MAX_SECONDS = 10;
 
 type Step = 'welcome' | 'consigne' | 'camera' | 'preview' | 'sent';
 
+interface CapsuleInfo {
+  found: boolean;
+  code: string;
+  couple: string;
+  dateIso: string | null;
+  lieu: string | null;
+  capsuleName: string;
+  consigne: string;
+  clipsCount: number;
+  sealed: boolean;
+}
+
 /**
  * /c/:code — LA page invité.
  * Zéro app, zéro compte : scan → consigne → 10 s → envoi → merci.
- * C'est 80 % de la valeur du produit. Si cette page met plus de
- * 15 s à être utilisable ou plante, le produit est mort.
+ * La capsule est résolue côté serveur : le clip est visible sur tous les appareils.
  */
 export function GuestExperience({ code }: { code: string }) {
-  const { capsule, folder, clips, addClip } = useEternity();
-  const valid = isValidAimeCode(code);
-  const known = valid && code === capsule.code;
+  const { uploadClip } = useEternity();
+  const validFormat = isValidAimeCode(code);
 
-  const event = known
-    ? {
-        couple: 'Sophie & Lucas',
-        dateIso: folder.metadata.date as string,
-        lieu: folder.metadata.lieu as string,
-        capsuleName: capsule.name,
-        consigne: 'Racontez votre meilleur souvenir avec nous.',
-        known: true,
-      }
-    : {
-        couple: 'Un événement ETERNITY',
-        dateIso: null as string | null,
-        lieu: null as string | null,
-        capsuleName: 'Capsule privée',
-        consigne: 'Dix secondes pour dire l’essentiel.',
-        known: false,
-      };
+  const [info, setInfo] = useState<CapsuleInfo | null>(null);
+  const [status, setStatus] = useState<'loading' | 'ok' | 'invalid'>(validFormat ? 'loading' : 'invalid');
+  const [step, setStep] = useState<Step>('welcome');
 
-  const [step, setStep] = useState<Step>(valid ? 'welcome' : 'sent'); // invalid → écran dédié plus bas
+  // Résolution serveur de la capsule
+  useEffect(() => {
+    if (!validFormat) return;
+    let cancelled = false;
+    fetch(`/api/capsule/${encodeURIComponent(code)}`, { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((data: CapsuleInfo) => {
+        if (cancelled) return;
+        if (data.found) {
+          setInfo(data);
+          setStatus('ok');
+        } else {
+          setStatus('invalid');
+        }
+      })
+      .catch(() => !cancelled && setStatus('invalid'));
+    return () => {
+      cancelled = true;
+    };
+  }, [code, validFormat]);
+
+  const handleUploaded = useCallback(() => {
+    setInfo((prev) => (prev ? { ...prev, clipsCount: prev.clipsCount + 1 } : prev));
+  }, []);
 
   // Segments story (1·2·3·4) — mécanique qui réduit l'abandon
   const segmentIndex = step === 'welcome' ? 0 : step === 'consigne' ? 1 : step === 'sent' ? 3 : 2;
@@ -62,10 +81,15 @@ export function GuestExperience({ code }: { code: string }) {
   return (
     <main className="relative flex min-h-dvh flex-col bg-ink">
       <Header code={code} />
-      {valid && <StorySegments current={segmentIndex} />}
-      {!valid ? (
-        <InvalidCode />
-      ) : (
+      {status === 'ok' && <StorySegments current={segmentIndex} />}
+
+      {status === 'invalid' && <InvalidCode />}
+      {status === 'loading' && (
+        <div className="flex flex-1 items-center justify-center">
+          <Loader2 size={22} className="animate-spin text-gold" />
+        </div>
+      )}
+      {status === 'ok' && info && (
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -76,11 +100,11 @@ export function GuestExperience({ code }: { code: string }) {
             className="flex flex-1 flex-col"
           >
             {step === 'welcome' && (
-              <Welcome event={event} clipsCount={clips.length} onStart={() => setStep('consigne')} />
+              <Welcome event={info} onStart={() => setStep('consigne')} />
             )}
             {step === 'consigne' && (
               <Consigne
-                event={event}
+                event={info}
                 onBack={() => setStep('welcome')}
                 onReady={() => setStep('camera')}
               />
@@ -89,12 +113,15 @@ export function GuestExperience({ code }: { code: string }) {
               <GuestCamera
                 step={step}
                 setStep={setStep}
-                onDone={() => setStep('sent')}
-                event={event}
-                addClip={addClip}
+                onDone={() => {
+                  handleUploaded();
+                  setStep('sent');
+                }}
+                event={info}
+                uploadClip={uploadClip}
               />
             )}
-            {step === 'sent' && <Sent clipsCount={clips.length} known={event.known} />}
+            {step === 'sent' && <Sent clipsCount={info.clipsCount} sealed={info.sealed} />}
           </motion.div>
         </AnimatePresence>
       )}
@@ -161,15 +188,7 @@ function InvalidCode() {
 }
 
 /* ---------------- 1 · Bienvenue ---------------- */
-function Welcome({
-  event,
-  clipsCount,
-  onStart,
-}: {
-  event: { couple: string; dateIso: string | null; lieu: string | null; capsuleName: string };
-  clipsCount: number;
-  onStart: () => void;
-}) {
+function Welcome({ event, onStart }: { event: CapsuleInfo; onStart: () => void }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center">
       <motion.p
@@ -192,9 +211,10 @@ function Welcome({
       <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
         <span className="chip bg-gold/12 text-gold">
           <Timer size={12} />
-          {clipsCount > 0 ? `${clipsCount} clips déjà dans la capsule` : 'La capsule vous attend'}
+          {event.clipsCount > 0 ? `${event.clipsCount} clips déjà dans la capsule` : 'La capsule vous attend'}
         </span>
         {event.dateIso && <span className="chip">{GUESTS_TOTAL} invités</span>}
+        {event.sealed && <span className="chip text-gold">Capsule scellée</span>}
       </div>
 
       <p className="mx-auto mt-8 max-w-sm text-balance text-base leading-relaxed text-mist">
@@ -221,7 +241,7 @@ function Consigne({
   onBack,
   onReady,
 }: {
-  event: { couple: string; consigne: string };
+  event: CapsuleInfo;
   onBack: () => void;
   onReady: () => void;
 }) {
@@ -262,13 +282,13 @@ function GuestCamera({
   setStep,
   onDone,
   event,
-  addClip,
+  uploadClip,
 }: {
   step: Step;
   setStep: (s: Step) => void;
   onDone: () => void;
-  event: { couple: string };
-  addClip: ReturnType<typeof useEternity>['addClip'];
+  event: CapsuleInfo;
+  uploadClip: ReturnType<typeof useEternity>['uploadClip'];
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -381,23 +401,11 @@ function GuestCamera({
   const send = async () => {
     if (!blob || sending) return;
     setSending(true);
-    const key = `clip-${uid('blob')}`;
-    if (isIdbAvailable()) {
-      try {
-        await idbPut(key, blob);
-      } catch {
-        /* le clip reste lié à la session */
-      }
-    }
-    addClip({
-      user_id: 'guest',
-      author_name: name.trim() || 'Un invité',
-      author_avatar: null,
-      video_url: key,
-      poster: null,
+    await uploadClip(blob, {
       caption: message.trim() || `Dix secondes pour ${event.couple}.`,
+      authorName: name.trim() || 'Un invité',
+      code: event.code,
       duration: Math.max(1, Math.min(MAX_SECONDS, elapsed || MAX_SECONDS)),
-      local: true,
     });
     onDone();
   };
@@ -539,7 +547,7 @@ function GuestCamera({
 }
 
 /* ---------------- 5 · Merci ---------------- */
-function Sent({ clipsCount, known }: { clipsCount: number; known: boolean }) {
+function Sent({ clipsCount, sealed }: { clipsCount: number; sealed: boolean }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center">
       <motion.span
@@ -552,9 +560,9 @@ function Sent({ clipsCount, known }: { clipsCount: number; known: boolean }) {
       </motion.span>
       <h1 className="mt-8 text-4xl font-light">Merci.</h1>
       <p className="mx-auto mt-4 max-w-sm text-balance text-sm leading-relaxed text-mist">
-        {known
-          ? 'Votre clip est horodaté. À minuit, la capsule sera scellée — irréversiblement — et vos dix secondes vivront dans le film pour toujours.'
-          : 'Votre clip est horodaté et rejoint la capsule. Il vivra dans le film scellé pour toujours.'}
+        {sealed
+          ? 'Votre clip est horodaté et rejoint la capsule, déjà scellée pour toujours.'
+          : 'Votre clip est horodaté. À minuit, la capsule sera scellée — irréversiblement — et vos dix secondes vivront dans le film pour toujours.'}
       </p>
       <motion.div
         initial={{ opacity: 0, y: 8 }}

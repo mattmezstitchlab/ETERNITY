@@ -73,24 +73,39 @@ function SocialRow() {
 
 function LoginForm() {
   const router = useRouter();
-  const { signUp } = useEternity();
+  const { login } = useEternity();
   const [show, setShow] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const err = await login(email, password);
+    setLoading(false);
+    if (err) setError(err);
+    else router.push('/espace-compte');
+  };
+
   return (
     <div className="card p-7 md:p-8">
       <h1 className="text-2xl font-light">Ravi de vous revoir</h1>
       <p className="mt-2 text-sm text-mist">Vos capsules vous ont attendu sagement.</p>
-      <form
-        className="mt-7 space-y-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          const data = new FormData(e.currentTarget);
-          signUp('Sophie Marchand', String(data.get('email') ?? ''));
-          router.push('/espace-compte');
-        }}
-      >
+      <form className="mt-7 space-y-4" onSubmit={submit}>
         <label className="block">
           <span className="mb-2 block text-xs text-mist">Email</span>
-          <input name="email" type="email" required placeholder="sophie@aime.fr" className="input" />
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="sophie@aime.fr"
+            className="input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </label>
         <label className="block">
           <span className="mb-2 block text-xs text-mist">Mot de passe</span>
@@ -100,6 +115,8 @@ function LoginForm() {
               required
               placeholder="••••••••••"
               className="input pr-12"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button
               type="button"
@@ -111,11 +128,33 @@ function LoginForm() {
             </button>
           </span>
         </label>
-        <button type="submit" className="btn-gold w-full">
+        {error && <p className="rounded-card bg-red-500/10 p-3 text-xs text-red-400">{error}</p>}
+        <button type="submit" disabled={loading} className="btn-gold w-full">
           <Mail size={15} />
-          Se connecter
+          {loading ? 'Connexion…' : 'Se connecter'}
         </button>
       </form>
+
+      <button
+        type="button"
+        onClick={() => {
+          setEmail('sophie.marchand@aime.fr');
+          setPassword('eternity742');
+          setError(null);
+        }}
+        className="mt-5 w-full rounded-card bg-raise p-3.5 text-left transition-colors hover:ring-1 hover:ring-gold/40"
+      >
+        <span className="flex items-center justify-between text-xs">
+          <span className="text-mist">
+            <span className="text-gold">Compte démo</span> — mariage Sophie & Lucas déjà rempli
+          </span>
+          <span className="font-mono text-[10px] text-mist/70">remplir</span>
+        </span>
+        <span className="mt-1 block font-mono text-[10px] text-mist/60">
+          sophie.marchand@aime.fr · eternity742
+        </span>
+      </button>
+
       <SocialRow />
     </div>
   );
@@ -127,7 +166,10 @@ function SignupFlow() {
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [universe, setUniverse] = useState<UniverseId>('mariage');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const steps = ['Identité', 'Univers', 'QR'];
 
@@ -196,6 +238,18 @@ function SignupFlow() {
                     className="input"
                   />
                 </label>
+                <label className="block">
+                  <span className="mb-2 block text-xs text-mist">Mot de passe (6 caractères min.)</span>
+                  <input
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    type="password"
+                    required
+                    minLength={6}
+                    placeholder="••••••••••"
+                    className="input"
+                  />
+                </label>
                 <button type="submit" className="btn-gold w-full">
                   Continuer
                   <ArrowRight size={15} />
@@ -237,15 +291,21 @@ function SignupFlow() {
                   </button>
                 ))}
               </div>
+              {error && <p className="mt-4 rounded-card bg-red-500/10 p-3 text-xs text-red-400">{error}</p>}
               <button
                 type="button"
+                disabled={loading}
                 className="btn-gold mt-6 w-full"
-                onClick={() => {
-                  signUp(name, email);
-                  setStep(2);
+                onClick={async () => {
+                  setLoading(true);
+                  setError(null);
+                  const err = await signUp(name, email, password);
+                  setLoading(false);
+                  if (err) setError(err);
+                  else setStep(2);
                 }}
               >
-                Générer mon QR
+                {loading ? 'Création du compte…' : 'Générer mon QR'}
                 <ArrowRight size={15} />
               </button>
             </div>
