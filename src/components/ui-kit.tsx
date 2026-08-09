@@ -48,7 +48,7 @@ export function QRBadge({ code, size = 148 }: { code: string; size?: number }) {
   return (
     <div className="inline-flex flex-col items-center gap-3">
       <div className="rounded-3xl bg-white p-4 shadow-[0_0_60px_-12px_rgba(201,169,110,0.55)]">
-        <QRCode value={`https://eternity.video/app/qr/${code}`} size={size} fgColor="#0A0A0A" bgColor="#FFFFFF" />
+        <QRCode value={`https://eternity.video/c/${code}`} size={size} fgColor="#0A0A0A" bgColor="#FFFFFF" />
       </div>
       <span className="inline-flex items-center gap-1.5 rounded-full bg-raise px-3.5 py-1.5 font-mono text-xs tracking-[2px] text-gold">
         <QrCode size={13} />

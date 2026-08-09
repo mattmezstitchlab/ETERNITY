@@ -6,11 +6,11 @@ const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string
   {
     title: 'Produit',
     links: [
-      { label: 'Créer une capsule', href: '/creation-capsule' },
-      { label: 'Mini-site événement', href: '/mini-site' },
-      { label: 'Registre public', href: '/registre' },
+      { label: 'La boucle', href: '/#boucle' },
+      { label: 'Créer ma capsule', href: '/inscription' },
+      { label: 'Page invité — démo', href: '/c/AIME-742-PLM' },
+      { label: 'Mini-site démo', href: '/mini-site' },
       { label: 'Tarifs', href: '/tarifs' },
-      { label: 'Espace compte', href: '/espace-compte' },
     ],
   },
   {
@@ -24,12 +24,13 @@ const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string
     ],
   },
   {
-    title: 'Aime',
+    title: 'Phase 2',
     links: [
+      { label: 'Espace compte', href: '/espace-compte' },
+      { label: 'Registre public', href: '/registre' },
+      { label: 'Profil public', href: '/profil-public' },
+      { label: 'Parcours capsule', href: '/creation-capsule' },
       { label: 'Doctrine', href: '/doctrine' },
-      { label: 'Capsules & promesses', href: '/doctrine#promesses' },
-      { label: 'Design system', href: '/doctrine#design-system' },
-      { label: 'Contact', href: 'mailto:bonjour@aime.fr' },
     ],
   },
 ];

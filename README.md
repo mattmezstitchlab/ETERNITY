@@ -1,8 +1,25 @@
 # ETERNITY by Aime
 
-> **OS administratif personnel universel, déguisé en app de capsules temporelles.**
-> Une seule PWA : desktop = site marketing + dashboard, mobile = expérience app type TikTok.
-> Premier univers lancé : **le mariage**.
+> **La boucle qui n'existe nulle part ailleurs : QR → 10 secondes → film collectif → scellement → pour toujours.**
+> Ni CRM de mariage (Mariages.net), ni vidéo surprise (VidHug), ni album infini (Google Photos) :
+> un rituel. Premier univers : **le mariage**.
+
+## Le `core` (ce qui fait la différence)
+
+- `src/app/c/[code]/page.tsx` — **la page invité, 80 % de la valeur** :
+  zéro app, zéro compte. Scan → consigne → caméra 10 s → envoi → merci.
+  Fallback upload si la caméra est bloquée.
+- `src/app/(marketing)/page.tsx` — **la homepage est la démo** : la boucle racontée
+  (scan / 10 s / scellement) avec maquettes animées, preuve Sophie & Lucas, CTA unique.
+- `/capsule` (via `/app/capsule/cap_jourj`) — collecte en temps réel + **scellement irréversible horodaté**.
+- `/mini-site` — l'artefact permanent après scellement.
+
+Tout le reste (dashboard administratif, registre, messagerie, 8 univers, parcours 8 étapes)
+est **Phase 2** — regroupé dans le footer, pas dans le chemin critique.
+
+**Tarif reduit** : gratuit pour collecter, on paie pour sceller.
+
+**Métrique nord** : nombre de clips par capsule.
 
 ![Stack](https://img.shields.io/badge/Next.js-14-black) ![Tailwind](https://img.shields.io/badge/Tailwind-3.4-black) ![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-black) ![PWA](https://img.shields.io/badge/PWA-standalone-black)
 
@@ -22,6 +39,9 @@ Compte démo pré-chargé : **Sophie Marchand** — dossier « Mariage de Sophie
 (15 juin 2027, 89 invités, QR **AIME-742-PLM**). Toutes les données sont locales
 (persistées en `localStorage` + clips capturés en `IndexedDB`) et réinitialisables
 depuis `/app/compte` → « Réinitialiser la démo ».
+
+**Parcours démo express** : `/c/AIME-742-PLM` (invité, filmez 10 s) →
+`/app/capsule/cap_jourj` (le clip apparaît → scellement) → `/mini-site` (l'artefact).
 
 ## 🏗️ Architecture
 

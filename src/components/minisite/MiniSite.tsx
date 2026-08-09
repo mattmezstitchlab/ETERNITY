@@ -171,7 +171,7 @@ export function MiniSite() {
 
             <div className="mt-12 flex flex-col items-center gap-5 text-center">
               <QRBadge code={capsule.code} size={120} />
-              <Link href={`/app/qr/${capsule.code}`} className="btn-gold">
+              <Link href={`/c/${capsule.code}`} className="btn-gold">
                 <ScanLine size={16} />
                 Invité ? Scannez et filmez 10 s
               </Link>

@@ -68,7 +68,7 @@ function QRAfficher({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
 
-  const shareUrl = `https://eternity.video/app/qr/${code}`;
+  const shareUrl = `https://eternity.video/c/${code}`;
 
   const copy = async () => {
     try {

@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, Lock, QrCode, Scan, Users, Video } from 'lucide-react';
+import { ArrowRight, ChevronDown, Lock, Scan, Video } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion';
@@ -45,18 +45,18 @@ export default function HomePage() {
               </RevealItem>
               <RevealItem>
                 <p className="mt-7 max-w-xl text-base leading-relaxed text-white/70 md:text-lg">
-                  ETERNITY est votre OS administratif personnel, déguisé en capsules temporelles.
-                  Un QR aux invités, dix secondes chacun, un film qui vivra pour toujours.
+                  Un QR aux invités, dix secondes chacun, un film collectif scellé à minuit.
+                  Sans app pour eux, sans montage pour vous — un rituel qui n’existait pas encore.
                 </p>
               </RevealItem>
               <RevealItem>
                 <div className="mt-10 flex flex-wrap items-center gap-5">
                   <Link href="/inscription" className="btn-gold">
-                    Commencer gratuitement
+                    Créer ma capsule
                     <ArrowRight size={16} />
                   </Link>
-                  <Link href="/mariage" className="btn-outline">
-                    Découvrir le mariage
+                  <Link href="/c/AIME-742-PLM" className="btn-outline">
+                    Vivre la démo invité
                   </Link>
                 </div>
               </RevealItem>
@@ -98,9 +98,9 @@ export default function HomePage() {
       {/* ============ 8 UNIVERS ============ */}
       <section id="univers" className="container-site scroll-mt-24 py-24 md:py-32">
         <SectionHeading
-          kicker="Une seule app"
-          title="Huit univers. Une seule capsule d’identité."
-          sub="Mariage aujourd’hui. Naissance, anniversaire, diplôme, amitié, in memoriam, chantier et odyssée demain — le même OS, la même élégance."
+          kicker="Une seule boucle"
+          title="On commence par le mariage."
+          sub="QR, dix secondes, scellement : la boucle est universelle. Les sept autres univers s’ouvriront au fil des capsules scellées."
         />
         <RevealGroup className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {UNIVERSES.map((u) => (
@@ -144,50 +144,114 @@ export default function HomePage() {
         </RevealGroup>
       </section>
 
-      {/* ============ COMMENT ÇA MARCHE ============ */}
-      <section className="border-y border-white/5 bg-card/30 py-24 md:py-32">
+      {/* ============ LA BOUCLE — DÉMO NARRATIVE ============ */}
+      <section id="boucle" className="border-y border-white/5 bg-card/30 py-24 md:py-32">
         <div className="container-site">
           <SectionHeading
-            kicker="Le rituel"
-            title="Trois gestes. Puis le temps fait le reste."
+            kicker="La boucle"
+            title="Le rituel que personne d’autre n’ose."
+            sub="Pas d’app. Pas de compte. Pas de montage. Vos invités filment, vous scellez — l’histoire reste."
             align="left"
             className="max-w-3xl"
           />
-          <RevealGroup className="mt-16 grid gap-4 md:grid-cols-3">
+          <RevealGroup className="mt-16 grid gap-5 md:grid-cols-3">
             {[
               {
-                icon: Users,
                 step: '01',
-                title: 'Créez le dossier',
-                text: 'Mariage, naissance, chantier… le dossier adapte rôles, budget et agenda. Tout l’administratif de l’événement, enfin élégant.',
+                caption: 'L’invité scanne le QR',
+                detail: 'Posé sur la table, le menu, le faire-part. Il ouvre une page, c’est tout.',
+                mock: (
+                  <div className="flex h-full flex-col items-center justify-center gap-4 px-6">
+                    <div className="rounded-2xl bg-white p-3.5 shadow-[0_0_40px_-10px_rgba(201,169,110,0.6)]">
+                      <div className="grid h-24 w-24 grid-cols-6 gap-[3px]">
+                        {Array.from({ length: 36 }).map((_, i) => (
+                          <span key={i} className={`rounded-[1px] ${(i * 7 + 3) % 5 < 2 ? 'bg-ink' : 'bg-white'}`} />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-center text-xs text-white/80">
+                      Sophie & Lucas
+                      <br />
+                      <span className="font-mono text-[10px] tracking-[2px] text-gold">AIME-742-PLM</span>
+                    </p>
+                    <span className="chip">89 invités</span>
+                  </div>
+                ),
               },
               {
-                icon: QrCode,
                 step: '02',
-                title: 'Partagez le QR',
-                text: 'Un code AIME-XXX-XXX par événement. Chaque invité scanne et filme dix secondes — sans installer quoi que ce soit.',
+                caption: 'Il filme 10 secondes',
+                detail: 'Ni plus, ni moins. La contrainte qui rend chaque clip précieux — et le film montable seul.',
+                mock: (
+                  <div className="relative flex h-full flex-col items-center justify-center bg-gradient-to-b from-raise/60 to-black px-6">
+                    <div aria-hidden className="absolute inset-4 rounded-2xl border border-white/15" />
+                    <span className="chip bg-black/60 text-white/85 backdrop-blur">
+                      « Racontez votre meilleur souvenir avec eux. »
+                    </span>
+                    <div className="relative mt-8 flex h-20 w-20 items-center justify-center">
+                      <svg viewBox="0 0 88 88" className="absolute inset-0 -rotate-90">
+                        <circle cx="44" cy="44" r="36" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="4" />
+                        <circle
+                          cx="44"
+                          cy="44"
+                          r="36"
+                          fill="none"
+                          stroke="#C9A96E"
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                          strokeDasharray={2 * Math.PI * 36}
+                          strokeDashoffset={2 * Math.PI * 36 * 0.3}
+                        />
+                      </svg>
+                      <span className="h-4 w-4 rounded-sm bg-gold" />
+                    </div>
+                    <p className="mt-4 text-sm tabular-nums text-white/80">3s restantes</p>
+                  </div>
+                ),
               },
               {
-                icon: Lock,
                 step: '03',
-                title: 'Scellez la capsule',
-                text: 'Irréversible et horodaté. L’IA monte le film documentaire, qui vit pour toujours sur le mini-site de l’événement.',
+                caption: 'Vous scellez à minuit',
+                detail: 'Irréversible, horodaté. Le film collectif vit pour toujours sur le mini-site.',
+                mock: (
+                  <div className="flex h-full flex-col items-center justify-center gap-5 px-6">
+                    <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gold/15 text-gold">
+                      <Lock size={24} strokeWidth={1.4} />
+                    </span>
+                    <div className="text-center">
+                      <p className="text-sm font-light text-white">Scellée le 16.06.2027 · 00:12</p>
+                      <p className="mt-1.5 text-[10px] uppercase tracking-[2px] text-mist">Irréversible · Horodatée</p>
+                    </div>
+                    <div className="w-full max-w-[180px] rounded-card bg-raise p-3 text-center">
+                      <p className="text-xl font-light text-gold">62</p>
+                      <p className="text-[9px] uppercase tracking-[2px] text-mist">clips gravés à jamais</p>
+                    </div>
+                  </div>
+                ),
               },
             ].map((s) => (
               <RevealItem key={s.step}>
-                <div className="card group h-full p-8">
-                  <div className="flex items-center justify-between">
-                    <s.icon size={22} strokeWidth={1.5} className="text-gold" />
-                    <span className="text-5xl font-light text-white/8 transition-colors group-hover:text-gold/25">
+                <div className="card group h-full overflow-hidden">
+                  <div className="relative aspect-[4/5] overflow-hidden border-b border-white/5 bg-ink/60">
+                    {s.mock}
+                    <span className="absolute right-5 top-4 text-4xl font-light text-white/8 transition-colors group-hover:text-gold/25">
                       {s.step}
                     </span>
                   </div>
-                  <h3 className="mt-10 text-2xl font-light">{s.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-mist">{s.text}</p>
+                  <div className="p-7">
+                    <h3 className="text-2xl font-light">{s.caption}</h3>
+                    <p className="mt-2.5 text-sm leading-relaxed text-mist">{s.detail}</p>
+                  </div>
                 </div>
               </RevealItem>
             ))}
           </RevealGroup>
+          <Reveal className="mt-10 text-center">
+            <Link href="/c/AIME-742-PLM" className="btn-outline">
+              <Video size={16} />
+              Vivre l’expérience invité — démo
+            </Link>
+          </Reveal>
         </div>
       </section>
 
@@ -275,14 +339,14 @@ export default function HomePage() {
             <PlusButton href="/inscription" size={64} />
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/inscription" className="btn-gold">
-                Créer mon compte
+                Créer ma capsule
               </Link>
-              <Link href="/creation-capsule" className="btn-outline">
+              <Link href="/c/AIME-742-PLM" className="btn-outline">
                 <Video size={16} />
-                Parcourir les 8 étapes
+                Tester côté invité
               </Link>
             </div>
-            <p className="text-xs text-mist">Gratuit pour découvrir · Sans carte bancaire</p>
+            <p className="text-xs text-mist">Gratuit pour collecter · On ne paie que pour sceller</p>
           </div>
         </Reveal>
       </section>
