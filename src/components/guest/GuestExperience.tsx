@@ -55,9 +55,14 @@ export function GuestExperience({ code }: { code: string }) {
       };
 
   const [step, setStep] = useState<Step>(valid ? 'welcome' : 'sent'); // invalid → écran dédié plus bas
+
+  // Segments story (1·2·3·4) — mécanique qui réduit l'abandon
+  const segmentIndex = step === 'welcome' ? 0 : step === 'consigne' ? 1 : step === 'sent' ? 3 : 2;
+
   return (
     <main className="relative flex min-h-dvh flex-col bg-ink">
       <Header code={code} />
+      {valid && <StorySegments current={segmentIndex} />}
       {!valid ? (
         <InvalidCode />
       ) : (
@@ -94,6 +99,30 @@ export function GuestExperience({ code }: { code: string }) {
         </AnimatePresence>
       )}
     </main>
+  );
+}
+
+/* ---------------- Segments story ---------------- */
+const SEGMENTS = ['Accueil', 'Consigne', 'Captation', 'Merci'] as const;
+
+function StorySegments({ current }: { current: number }) {
+  return (
+    <div className="mx-auto flex w-full max-w-sm items-center gap-1.5 px-6 pb-2 pt-1" aria-hidden>
+      {SEGMENTS.map((_, i) => (
+        <span key={i} className="relative h-[3px] flex-1 overflow-hidden rounded-full bg-white/15">
+          {i < current && <span className="absolute inset-0 rounded-full bg-gold" />}
+          {i === current && (
+            <motion.span
+              layoutId="guest-segment"
+              className="absolute inset-y-0 left-0 rounded-full bg-gold"
+              initial={{ width: '0%' }}
+              animate={{ width: '100%' }}
+              transition={{ duration: 0.7, ease: 'easeOut' }}
+            />
+          )}
+        </span>
+      ))}
+    </div>
   );
 }
 

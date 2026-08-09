@@ -2,6 +2,7 @@ import { ArrowRight, ChevronDown, Lock, Scan, Video } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion';
+import { SnapEnhancer } from '@/components/SnapEnhancer';
 import { PlusButton, SectionHeading } from '@/components/ui-kit';
 import { InfinityMark } from '@/components/Logo';
 import { UNIVERSES } from '@/lib/universes';
@@ -11,8 +12,9 @@ import { WEDDING_DATE_ISO } from '@/lib/utils';
 export default function HomePage() {
   return (
     <main>
+      <SnapEnhancer />
       {/* ============ HERO ============ */}
-      <section className="relative flex min-h-[92dvh] items-end overflow-hidden pb-16 md:items-center md:pb-0">
+      <section className="relative flex min-h-[92dvh] snap-start items-end overflow-hidden pb-16 md:items-center md:pb-0">
         <Image
           src="/images/hero-mariage.jpg"
           alt="Dîner de mariage au château, à la tombée de la nuit"
@@ -96,7 +98,7 @@ export default function HomePage() {
       </section>
 
       {/* ============ 8 UNIVERS ============ */}
-      <section id="univers" className="container-site scroll-mt-24 py-24 md:py-32">
+      <section id="univers" className="container-site snap-start scroll-mt-24 py-24 md:py-32">
         <SectionHeading
           kicker="Une seule boucle"
           title="On commence par le mariage."
@@ -145,8 +147,8 @@ export default function HomePage() {
       </section>
 
       {/* ============ LA BOUCLE — DÉMO NARRATIVE ============ */}
-      <section id="boucle" className="border-y border-white/5 bg-card/30 py-24 md:py-32">
-        <div className="container-site">
+      <section id="boucle" className="snap-start border-y border-white/5 bg-card/30 py-24 md:flex md:min-h-[100svh] md:flex-col md:py-0">
+        <div className="container-site flex flex-1 flex-col justify-center md:py-24">
           <SectionHeading
             kicker="La boucle"
             title="Le rituel que personne d’autre n’ose."
@@ -154,7 +156,8 @@ export default function HomePage() {
             align="left"
             className="max-w-3xl"
           />
-          <RevealGroup className="mt-16 grid gap-5 md:grid-cols-3">
+          {/* Mobile : story horizontale à swiper · Desktop : 3 colonnes */}
+          <RevealGroup className="no-scrollbar -mx-6 mt-16 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2 md:mx-0 md:grid md:snap-none md:grid-cols-3 md:gap-5 md:overflow-visible md:px-0 md:pb-0">
             {[
               {
                 step: '01',
@@ -230,9 +233,9 @@ export default function HomePage() {
                 ),
               },
             ].map((s) => (
-              <RevealItem key={s.step}>
+              <RevealItem key={s.step} className="w-[82%] shrink-0 snap-center md:w-auto md:shrink">
                 <div className="card group h-full overflow-hidden">
-                  <div className="relative aspect-[4/5] overflow-hidden border-b border-white/5 bg-ink/60">
+                  <div className="relative aspect-[4/5] overflow-hidden border-b border-white/5 bg-ink/60 md:aspect-auto md:h-[380px]">
                     {s.mock}
                     <span className="absolute right-5 top-4 text-4xl font-light text-white/8 transition-colors group-hover:text-gold/25">
                       {s.step}
@@ -256,7 +259,8 @@ export default function HomePage() {
       </section>
 
       {/* ============ USE CASE : SOPHIE & LUCAS ============ */}
-      <section className="container-site py-24 md:py-32">
+      <section className="container-site snap-start py-24 md:flex md:min-h-[100svh] md:flex-col md:justify-center md:py-16">
+        <div>
         <div className="grid items-center gap-14 lg:grid-cols-2">
           <Reveal>
             <div className="relative overflow-hidden rounded-card">
@@ -309,10 +313,11 @@ export default function HomePage() {
             </RevealItem>
           </RevealGroup>
         </div>
+        </div>
       </section>
 
       {/* ============ DOCTRINE TEASER ============ */}
-      <section className="relative overflow-hidden border-y border-white/5 py-28 md:py-36">
+      <section className="relative snap-start overflow-hidden border-y border-white/5 py-28 md:flex md:min-h-[85svh] md:items-center md:py-0">
         <div className="grain absolute inset-0" />
         <div className="container-site relative text-center">
           <Reveal>
@@ -329,7 +334,7 @@ export default function HomePage() {
       </section>
 
       {/* ============ CTA FINAL ============ */}
-      <section className="container-site py-24 text-center md:py-32">
+      <section className="container-site snap-start py-24 text-center md:flex md:min-h-[92svh] md:flex-col md:justify-center md:py-16">
         <Reveal>
           <p className="kicker">Prêt à commencer ?</p>
           <h2 className="mx-auto mt-4 max-w-2xl text-balance text-4xl font-light leading-[1.08] md:text-6xl">
